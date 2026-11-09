@@ -96,8 +96,9 @@ lazy_static::lazy_static! {
     pub static ref APP_HOME_DIR: RwLock<String> = Default::default();
 }
 
-pub const LINK_DOCS_HOME: &str = "https://rustdesk.com/docs/en/";
-pub const LINK_DOCS_X11_REQUIRED: &str = "https://rustdesk.com/docs/en/manual/linux/#x11-required";
+// SimpleDesk: links go to the project page, not to rustdesk.com.
+pub const LINK_DOCS_HOME: &str = crate::simpledesk::HOME_URL;
+pub const LINK_DOCS_X11_REQUIRED: &str = crate::simpledesk::HOME_URL;
 
 lazy_static::lazy_static! {
     pub static ref HELPER_URL: HashMap<&'static str, &'static str> = HashMap::from([
@@ -113,8 +114,9 @@ const CHARS: &[char] = &[
     'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 ];
 
-pub const RENDEZVOUS_SERVERS: &[&str] = &["rs-ny.rustdesk.com"];
-pub const RS_PUB_KEY: &str = "OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=";
+// SimpleDesk: the built-in server instead of rs-ny.rustdesk.com, see simpledesk.rs.
+pub const RENDEZVOUS_SERVERS: &[&str] = &[crate::simpledesk::SERVER];
+pub const RS_PUB_KEY: &str = crate::simpledesk::KEY;
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
 pub const RELAY_PORT: i32 = 21117;

@@ -57,6 +57,7 @@ pub mod fingerprint;
 pub use flexi_logger;
 pub mod log_throttle;
 pub mod rx_probe;
+pub mod simpledesk;
 pub mod stream;
 pub mod websocket;
 #[cfg(feature = "webrtc")]
@@ -507,26 +508,25 @@ pub struct VersionCheckResponse {
 pub const VER_TYPE_RUSTDESK_CLIENT: &str = "rustdesk-client";
 pub const VER_TYPE_RUSTDESK_SERVER: &str = "rustdesk-server";
 
+/// SimpleDesk: the update check asks the GitHub API for the latest release of
+/// [`simpledesk::UPDATE_REPO`] with a plain GET. Nothing about the device is sent, so the
+/// request only carries the type; the answer is a [`LatestRelease`].
 pub fn version_check_request(typ: String) -> (VersionCheckRequest, String) {
-    const URL: &str = "https://api.rustdesk.com/version/latest";
-
-    use sysinfo::System;
-    let system = System::new();
-    let os = system.distribution_id();
-    let os_version = system.os_version().unwrap_or_default();
-    let arch = std::env::consts::ARCH.to_string();
-    #[allow(deprecated)]
-    let device_id = fingerprint::get_fingerprint(None, None);
     (
         VersionCheckRequest {
-            os,
-            os_version,
-            arch,
-            device_id,
             typ,
+            ..Default::default()
         },
-        URL.to_string(),
+        simpledesk::latest_release_api_url(),
     )
+}
+
+/// SimpleDesk: the part of a GitHub release the update check needs.
+#[derive(Debug, Default, Deserialize)]
+pub struct LatestRelease {
+    /// Release page, e.g. https://github.com/owner/repo/releases/tag/1.2.3
+    #[serde(default)]
+    pub html_url: String,
 }
 
 pub fn time_based_rand() -> u32 {
