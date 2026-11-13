@@ -80,6 +80,22 @@ fn option(key: &str, value: &str) {
         .insert(key.into(), value.into());
 }
 
+const TARGET_HOST: &str = "websocket-target.invalid";
+
+/// The host the configured cases set up as their server. It has to pass the SimpleDesk allowlist,
+/// or the client drops the options that name it and never asks the proxy for it.
+fn configured_host() -> String {
+    if hbb_common::simpledesk::is_server_allowed(TARGET_HOST) {
+        return TARGET_HOST.to_owned();
+    }
+    let domain = hbb_common::simpledesk::ALLOWED_SERVERS
+        .split(',')
+        .map(str::trim)
+        .find(|s| !s.is_empty() && s.parse::<std::net::IpAddr>().is_err())
+        .expect("an allowed domain");
+    format!("websocket-target.{domain}")
+}
+
 async fn proxy_round_trip(
     scheme: &str,
     url: &str,
@@ -87,6 +103,11 @@ async fn proxy_round_trip(
     auth: bool,
     configured: bool,
 ) {
+    let url = &if configured {
+        url.replace(TARGET_HOST, &configured_host())
+    } else {
+        url.to_owned()
+    };
     let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
     let proxy = Socks5Server {
         proxy: format!("{scheme}://{}", listener.local_addr().unwrap()),
@@ -161,13 +182,9 @@ async fn proxy_round_trip(
         option("custom-rendezvous-server", target.host_str().unwrap());
         option(
             "api-server",
-            if wss {
-                "https://websocket-target.invalid"
-            } else {
-                "http://websocket-target.invalid"
-            },
+            &format!("{}://{}", if wss { "https" } else { "http" }, configured_host()),
         );
-        socket_client::connect_tcp("websocket-target.invalid:21116", TIMEOUT)
+        socket_client::connect_tcp(format!("{}:21116", configured_host()), TIMEOUT)
             .await
             .unwrap()
     } else {
