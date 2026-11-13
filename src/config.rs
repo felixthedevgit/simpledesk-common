@@ -96,7 +96,7 @@ lazy_static::lazy_static! {
     pub static ref APP_HOME_DIR: RwLock<String> = Default::default();
 }
 
-// SimpleDesk: links go to the project page, not to rustdesk.com.
+// SimpleDesk: links go to the project page, not to RustDesk's website.
 pub const LINK_DOCS_HOME: &str = crate::simpledesk::HOME_URL;
 pub const LINK_DOCS_X11_REQUIRED: &str = crate::simpledesk::HOME_URL;
 
@@ -114,7 +114,7 @@ const CHARS: &[char] = &[
     'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 ];
 
-// SimpleDesk: the built-in server instead of rs-ny.rustdesk.com, see simpledesk.rs.
+// SimpleDesk: the built-in server instead of RustDesk's public server, see simpledesk.rs.
 pub const RENDEZVOUS_SERVERS: &[&str] = &[crate::simpledesk::SERVER];
 pub const RS_PUB_KEY: &str = crate::simpledesk::KEY;
 

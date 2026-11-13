@@ -332,8 +332,7 @@ pub fn get_uuid() -> Vec<u8> {
         {
             static INIT: std::sync::Once = std::sync::Once::new();
             INIT.call_once(|| {
-                // Keep in sync with upstream handling:
-                // https://github.com/rustdesk/rustdesk/blob/85db6779828349b23ca3eba91cc7cd36c5337797/src/common.rs#L822
+                // Keep in sync with upstream handling in RustDesk's src/common.rs.
                 let username = whoami::username().trim_end_matches('\0').to_owned();
                 let max_retries = if username == "root" { 16 } else { 8 };
                 for i in 0..max_retries {

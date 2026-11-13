@@ -13,8 +13,6 @@ use std::process::Command;
 // No idea why the audit logs happen.
 // Though the audit logs may disappear after rebooting.
 //
-// See https://github.com/rustdesk/rustdesk/discussions/11959
-//
 // `ausearch -x /usr/share/rustdesk/rustdesk` will return
 // ...
 // time->Tue Jun 24 10:40:43 2025
