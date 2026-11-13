@@ -1362,12 +1362,21 @@ impl Config {
         let mut res = DEFAULT_SETTINGS.read().unwrap().clone();
         res.extend(CONFIG2.read().unwrap().options.clone());
         res.extend(OVERWRITE_SETTINGS.read().unwrap().clone());
+        // SimpleDesk: options without a setting have fixed values, see simpledesk.rs.
+        res.extend(
+            crate::simpledesk::FIXED_OPTIONS
+                .iter()
+                .map(|(k, v)| (k.to_string(), v.to_string())),
+        );
         res
     }
 
     #[inline]
     fn purify_options(v: &mut HashMap<String, String>) {
-        v.retain(|k, v| is_option_can_save(&OVERWRITE_SETTINGS, k, &DEFAULT_SETTINGS, v));
+        v.retain(|k, v| {
+            crate::simpledesk::fixed_option(k).is_none()
+                && is_option_can_save(&OVERWRITE_SETTINGS, k, &DEFAULT_SETTINGS, v)
+        });
     }
 
     pub fn set_options(mut v: HashMap<String, String>) {
@@ -1381,6 +1390,9 @@ impl Config {
     }
 
     pub fn get_option(k: &str) -> String {
+        if let Some(v) = crate::simpledesk::fixed_option(k) {
+            return v.to_owned();
+        }
         get_or(
             &OVERWRITE_SETTINGS,
             &CONFIG2.read().unwrap().options,
@@ -1395,7 +1407,9 @@ impl Config {
     }
 
     pub fn set_option(k: String, v: String) {
-        if !is_option_can_save(&OVERWRITE_SETTINGS, &k, &DEFAULT_SETTINGS, &v) {
+        if crate::simpledesk::fixed_option(&k).is_some()
+            || !is_option_can_save(&OVERWRITE_SETTINGS, &k, &DEFAULT_SETTINGS, &v)
+        {
             let mut config = CONFIG2.write().unwrap();
             if config.options.remove(&k).is_some() {
                 config.store();

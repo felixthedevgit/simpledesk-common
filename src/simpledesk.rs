@@ -38,6 +38,29 @@ pub fn latest_release_api_url() -> String {
     format!("https://api.github.com/repos/{}/releases/latest", UPDATE_REPO)
 }
 
+/// Options the settings page no longer offers, with the value they always have. They are not
+/// saved, and neither the UI, a config import nor a custom client config can change them.
+pub const FIXED_OPTIONS: &[(&str, &str)] = &[
+    // Everything runs over port 443, as WebSocket behind the reverse proxy.
+    ("allow-websocket", "Y"),
+    // No direct IP access and no LAN discovery, only the server.
+    ("direct-server", "N"),
+    ("enable-lan-discovery", "N"),
+    // Whoever connects cannot change the settings of this device.
+    ("allow-remote-config-modification", "N"),
+    // The one-time password and, once set, the permanent password; accepting by click works too.
+    ("verification-method", "use-both-passwords"),
+    ("approve-mode", ""),
+];
+
+/// The fixed value of `key`, if it is one of [`FIXED_OPTIONS`].
+pub fn fixed_option(key: &str) -> Option<&'static str> {
+    FIXED_OPTIONS
+        .iter()
+        .find(|(k, _)| *k == key)
+        .map(|(_, v)| *v)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -49,5 +72,16 @@ mod tests {
         }
         assert!(latest_release_api_url().starts_with("https://api.github.com/repos/"));
         assert_eq!(UPDATE_REPO.split('/').count(), 2);
+    }
+
+    #[test]
+    fn fixed_options_cannot_be_changed() {
+        use crate::config::Config;
+
+        Config::set_option("direct-server".to_owned(), "Y".to_owned());
+        Config::set_option("allow-websocket".to_owned(), "N".to_owned());
+        assert_eq!(Config::get_option("direct-server"), "N");
+        assert_eq!(Config::get_option("allow-websocket"), "Y");
+        assert_eq!(Config::get_options()["enable-lan-discovery"], "N");
     }
 }
