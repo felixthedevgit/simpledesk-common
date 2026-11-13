@@ -25,12 +25,12 @@ pub const API_SERVER: &str =
     build_env_or!("SIMPLEDESK_API_SERVER", "https://remote.felixthedev.com");
 
 /// GitHub repository with the releases for the update check, as "owner/repo".
-pub const UPDATE_REPO: &str = build_env_or!("SIMPLEDESK_UPDATE_REPO", "felixthedevgit/simpledesk");
+pub const UPDATE_REPO: &str = build_env_or!("SIMPLEDESK_UPDATE_REPO", "SimpleDesk-Org/simpledesk");
 
-/// Project page, used where RustDesk linked to rustdesk.com.
+/// Project page, used where RustDesk linked to its own website.
 pub const HOME_URL: &str = build_env_or!(
     "SIMPLEDESK_HOME_URL",
-    "https://github.com/felixthedevgit/simpledesk"
+    "https://github.com/SimpleDesk-Org/simpledesk"
 );
 
 /// The latest release of [`UPDATE_REPO`] in the GitHub API.
@@ -185,7 +185,7 @@ mod tests {
     #[test]
     fn nothing_points_to_rustdesk() {
         for value in [SERVER, KEY, API_SERVER, UPDATE_REPO, HOME_URL] {
-            assert!(!value.to_lowercase().contains("rustdesk.com"), "{}", value);
+            assert!(!value.to_lowercase().contains("rustdesk"), "{}", value);
         }
         assert!(latest_release_api_url().starts_with("https://api.github.com/repos/"));
         assert_eq!(UPDATE_REPO.split('/').count(), 2);
