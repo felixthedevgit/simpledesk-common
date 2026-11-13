@@ -1464,6 +1464,11 @@ impl Config {
         if Self::is_disable_change_permanent_password() {
             return false;
         }
+        // SimpleDesk: at least MIN_PERMANENT_PASSWORD_LEN characters, see simpledesk.rs.
+        if !crate::simpledesk::is_permanent_password_allowed(password) {
+            log::warn!("Refusing a permanent password shorter than 8 characters");
+            return false;
+        }
         let (preset_storage, preset_salt) = Self::get_preset_password_storage_and_salt();
         if preset_permanent_password_storage_matches_plain(&preset_storage, &preset_salt, password)
         {

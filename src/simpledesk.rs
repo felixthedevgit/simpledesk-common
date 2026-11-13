@@ -61,6 +61,14 @@ pub fn fixed_option(key: &str) -> Option<&'static str> {
         .map(|(_, v)| *v)
 }
 
+/// The shortest permanent password the client takes, in characters.
+pub const MIN_PERMANENT_PASSWORD_LEN: usize = 8;
+
+/// Whether `password` may become the permanent password. An empty one removes it.
+pub fn is_permanent_password_allowed(password: &str) -> bool {
+    password.is_empty() || password.chars().count() >= MIN_PERMANENT_PASSWORD_LEN
+}
+
 /// Servers the client may talk to, comma separated. A domain also allows its subdomains, an IP
 /// address only itself. An empty list (`SIMPLEDESK_ALLOWED_SERVERS=`) allows every server.
 pub const ALLOWED_SERVERS: &str = build_env_or!(
@@ -194,6 +202,17 @@ mod tests {
         assert_eq!(Config::get_option("direct-server"), "N");
         assert_eq!(Config::get_option("allow-websocket"), "Y");
         assert_eq!(Config::get_options()["enable-lan-discovery"], "N");
+    }
+
+    #[test]
+    fn permanent_password_has_at_least_8_characters() {
+        use crate::config::Config;
+
+        assert!(!Config::set_permanent_password("1234567"));
+        assert!(!Config::set_permanent_password("ÄÖÜäöüß"));
+        assert!(is_permanent_password_allowed("12345678"));
+        assert!(is_permanent_password_allowed("ÄÖÜäöüßé"));
+        assert!(is_permanent_password_allowed(""));
     }
 
     #[test]
