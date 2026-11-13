@@ -41,8 +41,6 @@ pub fn latest_release_api_url() -> String {
 /// Options the settings page no longer offers, with the value they always have. They are not
 /// saved, and neither the UI, a config import nor a custom client config can change them.
 pub const FIXED_OPTIONS: &[(&str, &str)] = &[
-    // Everything runs over port 443, as WebSocket behind the reverse proxy.
-    ("allow-websocket", "Y"),
     // No direct IP access and no LAN discovery, only the server.
     ("direct-server", "N"),
     ("enable-lan-discovery", "N"),
@@ -198,9 +196,9 @@ mod tests {
         use crate::config::Config;
 
         Config::set_option("direct-server".to_owned(), "Y".to_owned());
-        Config::set_option("allow-websocket".to_owned(), "N".to_owned());
+        Config::set_option("allow-remote-config-modification".to_owned(), "Y".to_owned());
         assert_eq!(Config::get_option("direct-server"), "N");
-        assert_eq!(Config::get_option("allow-websocket"), "Y");
+        assert_eq!(Config::get_option("allow-remote-config-modification"), "N");
         assert_eq!(Config::get_options()["enable-lan-discovery"], "N");
     }
 
