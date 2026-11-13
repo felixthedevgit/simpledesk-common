@@ -1065,6 +1065,10 @@ impl Config {
                 .next()
                 .unwrap_or_default();
         }
+        // SimpleDesk: only a server that is allowed, see simpledesk.rs.
+        if !crate::simpledesk::is_server_allowed(&rendezvous_server) {
+            rendezvous_server.clear();
+        }
         if !rendezvous_server.contains(':') {
             rendezvous_server = format!("{rendezvous_server}:{RENDEZVOUS_PORT}");
         }
@@ -1072,6 +1076,13 @@ impl Config {
     }
 
     pub fn get_rendezvous_servers() -> Vec<String> {
+        // SimpleDesk: only servers that are allowed, see simpledesk.rs.
+        let mut servers = Self::get_rendezvous_servers_unchecked();
+        servers.retain(|s| crate::simpledesk::is_server_allowed(s));
+        servers
+    }
+
+    fn get_rendezvous_servers_unchecked() -> Vec<String> {
         let s = EXE_RENDEZVOUS_SERVER.read().unwrap().clone();
         if !s.is_empty() {
             return vec![s];
@@ -1368,6 +1379,7 @@ impl Config {
                 .iter()
                 .map(|(k, v)| (k.to_string(), v.to_string())),
         );
+        res.retain(|k, v| crate::simpledesk::is_server_option_allowed(k, v));
         res
     }
 
@@ -1375,6 +1387,7 @@ impl Config {
     fn purify_options(v: &mut HashMap<String, String>) {
         v.retain(|k, v| {
             crate::simpledesk::fixed_option(k).is_none()
+                && crate::simpledesk::is_server_option_allowed(k, v)
                 && is_option_can_save(&OVERWRITE_SETTINGS, k, &DEFAULT_SETTINGS, v)
         });
     }
@@ -1393,13 +1406,14 @@ impl Config {
         if let Some(v) = crate::simpledesk::fixed_option(k) {
             return v.to_owned();
         }
-        get_or(
+        let v = get_or(
             &OVERWRITE_SETTINGS,
             &CONFIG2.read().unwrap().options,
             &DEFAULT_SETTINGS,
             k,
         )
-        .unwrap_or_default()
+        .unwrap_or_default();
+        crate::simpledesk::allowed_server_option(k, v)
     }
 
     pub fn get_bool_option(k: &str) -> bool {
@@ -1407,6 +1421,10 @@ impl Config {
     }
 
     pub fn set_option(k: String, v: String) {
+        if !crate::simpledesk::is_server_option_allowed(&k, &v) {
+            log::warn!("Refusing {}: {} is not an allowed server", k, v);
+            return;
+        }
         if crate::simpledesk::fixed_option(&k).is_some()
             || !is_option_can_save(&OVERWRITE_SETTINGS, &k, &DEFAULT_SETTINGS, &v)
         {
