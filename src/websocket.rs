@@ -777,8 +777,8 @@ mod tests {
             "wss://relay.example.com:8443/ws/relay"
         );
         // a peer's server or a relay on another host keeps the default port
-        assert_eq!(check_ws("example.com:21116"), "wss://example.com/ws/id");
-        assert_eq!(check_ws("example.com:21117"), "wss://example.com/ws/relay");
+        assert_eq!(check_ws("example.org:21116"), "wss://example.org/ws/id");
+        assert_eq!(check_ws("example.org:21117"), "wss://example.org/ws/relay");
         assert_eq!(check_ws("127.0.0.1:21116"), "ws://127.0.0.1:21118");
         // with no rendezvous server set, the public fallback is not one of ours
         Config::set_option("custom-rendezvous-server".to_string(), "".to_string());
