@@ -30,18 +30,18 @@ serde_derive = "1.0"
 serde = "1.0"
 serde_json = "1.0"
 lazy_static = "1.5"
-confy = { git = "https://github.com/rustdesk-org/confy" }
+confy = { git = "https://github.com/SimpleDesk-Org/confy" }
 dirs-next = "2.0"
 sodiumoxide = "0.2"
 regex = "1.11"
-tokio-socks = { git = "https://github.com/rustdesk-org/tokio-socks" }
+tokio-socks = { git = "https://github.com/SimpleDesk-Org/tokio-socks" }
 chrono = "0.4"
 libc = "0.2"
 dlopen = "0.1"
 toml = "0.7"
 uuid = { version = "1.16", features = ["v4"] }
 # new sysinfo issue
-sysinfo = { git = "https://github.com/rustdesk-org/sysinfo", branch = "rlim_max" }
+sysinfo = { git = "https://github.com/SimpleDesk-Org/sysinfo", branch = "rlim_max" }
 # new flexi_logger failed on nightly rustc 1.75 for x86
 thiserror = "1.0"
 httparse = "1.10"
@@ -60,7 +60,7 @@ tokio-native-tls = "0.3"
 # Fork of v0.26.2: upstream's WebSocketStream exposes get_config but no set_config, so a
 # message cap lowered before authorization could never be lifted again. One commit on top of
 # the tag; pinned by rev, not branch, because a fork branch can be rewritten under the lockfile.
-tokio-tungstenite = { git = "https://github.com/rustdesk-org/tokio-tungstenite", rev = "c241b11b03de4881faf1ecd2fe6e867c92f3013b", version = "0.29", features = ["native-tls", "rustls-tls-native-roots", "rustls-tls-webpki-roots"] }
+tokio-tungstenite = { git = "https://github.com/SimpleDesk-Org/tokio-tungstenite", rev = "c241b11b03de4881faf1ecd2fe6e867c92f3013b", version = "0.29", features = ["native-tls", "rustls-tls-native-roots", "rustls-tls-webpki-roots"] }
 tungstenite = { version = "0.29", features = ["native-tls", "rustls-tls-native-roots", "rustls-tls-webpki-roots"] }
 rustls-platform-verifier = "0.6"
 rustls-pki-types = "1.11"
@@ -76,8 +76,8 @@ libloading = "0.8"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 mac_address = "1.1"
-default_net = { git = "https://github.com/rustdesk-org/default_net" }
-machine-uid = { git = "https://github.com/rustdesk-org/machine-uid" }
+default_net = { git = "https://github.com/SimpleDesk-Org/default_net" }
+machine-uid = { git = "https://github.com/SimpleDesk-Org/machine-uid" }
 
 [build-dependencies]
 protobuf-codegen = { version = "3.7" }
@@ -94,6 +94,6 @@ x11 = "2.21"
 # Only takes effect when this crate is built on its own (tests, examples); a consumer's own
 # [patch] governs its build. Keep the rev in lockstep with rustdesk's root Cargo.toml.
 [patch.crates-io]
-webrtc = { git = "https://github.com/rustdesk-org/webrtc", rev = "49c89bd8d30e6e62e4c1a96cee38fdc11f79ef63" }
-webrtc-util = { git = "https://github.com/rustdesk-org/webrtc", rev = "49c89bd8d30e6e62e4c1a96cee38fdc11f79ef63" }
-webrtc-sctp = { git = "https://github.com/rustdesk-org/webrtc", rev = "49c89bd8d30e6e62e4c1a96cee38fdc11f79ef63" }
+webrtc = { git = "https://github.com/SimpleDesk-Org/webrtc", rev = "49c89bd8d30e6e62e4c1a96cee38fdc11f79ef63" }
+webrtc-util = { git = "https://github.com/SimpleDesk-Org/webrtc", rev = "49c89bd8d30e6e62e4c1a96cee38fdc11f79ef63" }
+webrtc-sctp = { git = "https://github.com/SimpleDesk-Org/webrtc", rev = "49c89bd8d30e6e62e4c1a96cee38fdc11f79ef63" }
